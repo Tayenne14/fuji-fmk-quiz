@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fuck, Marry, Kill – Fuji version</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* ---------- Base layout ---------- */
+    :root {
+      --bg-dark: #090514;
+      --bg-panel: #201233;
+      --bg-panel-soft: #2a1545;
+      --accent: #b37bff;
+      --accent-soft: #d5b4ff;
+      --accent-strong: #e090ff;
+      --text-main: #f7ecff;
+      --text-soft: #c2aee6;
+      --error: #ff6b9f;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #47205d 0%, #08030f 55%, #050208 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: 24px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1200px;
+      display: grid;
+      grid-template-columns: minmax(0, 2.3fr) minmax(0, 3fr);
+      gap: 28px;
+      align-items: stretch;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 16px;
+      }
+      .page {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ---------- Left: bias image + title ---------- */
+
+    .left-panel {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: radial-gradient(circle at top, #ffbdf1 0%, #b96cff 40%, #32154e 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 18px 24px;
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.55);
+    }
+
+    .title-card {
+      background: rgba(12, 4, 30, 0.72);
+      border-radius: 999px;
+      padding: 10px 22px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(10px);
+      max-width: 100%;
+    }
+
+    .title-card h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .title-emoji {
+      font-size: 22px;
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7));
+    }
+
+    .bias-frame {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      aspect-ratio: 3/4;
+      border-radius: 26px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75);
+    }
+
+    .bias-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform-origin: center;
+      animation: biasBreath 7s ease-in-out infinite;
+    }
+
+    @keyframes biasBreath {
+      0% { transform: scale(1.02); }
+      50% { transform: scale(1.12); }
+      100% { transform: scale(1.02); }
+    }
+
+    /* ---------- Right: quiz panel ---------- */
+
+    .quiz-panel {
+      background: radial-gradient(circle at top, #2a1846 0%, #13081f 65%, #0b0413 100%);
+      border-radius: var(--radius-lg);
+      padding: 26px 26px 22px;
+      box-shadow: 0 26px 70px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .quiz-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .fuji-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 3px solid var(--accent);
+      box-shadow: 0 0 18px rgba(178, 123, 255, 0.8);
+      flex-shrink: 0;
+    }
+
+    .fuji-avatar img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .quiz-header-text h2 {
+      font-size: 20px;
+      margin-bottom: 2px;
+    }
+
+    .quiz-header-text p {
+      font-size: 13px;
+      color: var(--text-soft);
+      max-width: 420px;
+    }
+
+    .quiz-header-text strong {
+      color: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    /* Progress & round info */
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-soft);
+      gap: 10px;
+    }
+
+    .round-label {
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 11px;
+      color: var(--accent-soft);
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 0 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+      border-radius: inherit;
+      transition: width 0.3s ease-out;
+    }
+
+    /* Question card */
+
+    .question-card {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: var(--radius-md);
+      padding: 18px 18px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55);
+    }
+
+    .question-card h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .question-card p.subtitle {
+      font-size: 13px;
+      color: var(--text-soft);
+      margin-bottom: 14px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 11px;
+      border-radius: 999px;
+      cursor: pointer;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid transparent;
+      transition: background 0.15s ease, border-color 0.15s ease,
+        box-shadow 0.15s ease, transform 0.05s ease;
+      font-size: 14px;
+    }
+
+    .option:hover {
+      background: rgba(179, 123, 255, 0.14);
+      border-color: rgba(211, 161, 255, 0.45);
+      box-shadow: 0 0 14px rgba(179, 123, 255, 0.4);
+    }
+
+    .option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .radio-outer {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 2px solid rgba(223, 199, 255, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .radio-inner {
+      width: 9px;
+      height: 9px;
+      border-radius: inherit;
+      background: transparent;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .option span.text {
+      flex: 1;
+    }
+
+    .option.selected {
+      background: radial-gradient(circle at top left, rgba(243, 215, 255, 0.15), rgba(21, 4, 40, 0.95));
+      border-color: var(--accent);
+      box-shadow: 0 0 18px rgba(179, 123, 255, 0.9);
+      transform: translateY(-1px);
+    }
+
+    .option.selected .radio-inner {
+      background: var(--accent-soft);
+      transform: scale(1.1);
+    }
+
+    /* Buttons & footer */
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 9px 20px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.15s ease,
+        background 0.15s ease, color 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #140717;
+      box-shadow: 0 12px 28px rgba(179, 123, 255, 0.7);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 16px 32px rgba(179, 123, 255, 0.9);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: var(--text-soft);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .question-counter {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    /* Results section */
+
+    .results {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+      font-size: 14px;
+    }
+
+    .results h3 {
+      font-size: 17px;
+    }
+
+    .score-highlight {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-soft);
+      line-height: 1.4;
+    }
+
+    .score-comment {
+      font-size: 13px;
+      color: var(--text-soft);
+      display: block;
+      margin-top: 4px;
+    }
+
+    .answer-list {
+      margin-top: 10px;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 420px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+
+    .result-item {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      line-height: 1.4;
+    }
+
+    .result-item:nth-child(odd) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .result-title {
+      font-weight: 600;
+      color: var(--accent-soft);
+      margin-bottom: 3px;
+    }
+
+    .result-line {
+      margin-top: 1px;
+    }
+
+    .answer-label {
+      color: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    .music-indicator {
+      font-size: 11px;
+      color: var(--text-soft);
+      text-align: right;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    .music-indicator span {
+      color: var(--accent-soft);
+    }
+
+    .signature {
+      font-size: 11px;
+      color: rgba(255, 231, 255, 0.85);
+      text-align: right;
+      margin-top: 2px;
+    }
+
+    .signature span {
+      color: var(--accent-soft);
+    }
+    /* ---------- Floating star background ---------- */
+
+    .star-field {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0; /* stays behind the main page content */
+    }
+
+    .star {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
+      opacity: 0.7;
+      animation-name: starFall;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes starFall {
+      0% {
+        transform: translateY(-10vh);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.9;
+      }
+      100% {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+    }
+
+    /* ---------- Start overlay ---------- */
+
+    .start-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(68, 29, 108, 0.95), rgba(7, 3, 18, 0.98));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: opacity 0.4s ease;
+    }
+
+    .start-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .start-card {
+      background: rgba(9, 4, 25, 0.95);
+      border-radius: 20px;
+      padding: 26px 30px 22px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+      border: 1px solid rgba(230, 182, 255, 0.35);
+    }
+
+    .start-card h2 {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .start-card p {
+      font-size: 14px;
+      color: var(--text-soft);
+      margin-bottom: 18px;
+    }
+
+    .start-card .start-emoji {
+      font-size: 26px;
+      display: block;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+    }
+
+    /* Small screens tweaks */
+    @media (max-width: 900px) {
+      .quiz-panel {
+        padding: 20px 16px 18px;
+      }
+      .quiz-header-text h2 {
+        font-size: 18px;
+      }
+      .title-card h1 {
+        font-size: 19px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Start overlay -->
+  <div id="startOverlay" class="start-overlay">
+    <div class="start-card">
+      <span class="start-emoji">🔮</span>
+      <h2>Fuck, Marry, Kill – Fuji version</h2>
+      <p>
+        Start the quiz and
+        let his theme song, RESCENE – Bloom, play in the background. 
+(You can also mute it, if you get sick of it).
+      </p>
+      <button id="startBtn" class="btn btn-primary">Start quiz</button>
+    </div>
+  </div>
+
+  <div class="page">
+    <!-- LEFT SIDE: BIAS & TITLE -->
+    <div class="left-panel">
+      <div class="title-card">
+        <h1>Fuck, Marry, Kill – Fuji version</h1>
+        <span class="title-emoji">🔮</span>
+      </div>
+
+      <div class="bias-frame">
+        <!-- bias image -->
+        <img src="yeeun.png" alt="Fuji's bias" />
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE: QUIZ -->
+    <div class="quiz-panel">
+      <div class="quiz-header">
+        <div class="fuji-avatar">
+          <img src="fuji.png" alt="Fuji avatar" />
+        </div>
+        <div class="quiz-header-text">
+          <h2>Try to guess what <strong>Fuji</strong> picked.</h2>
+          <p>
+            At the end you’ll see your score
+            <span>and his real answers</span>. No cheating slutterinos.
+          </p>
+        </div>
+      </div>
+
+      <div class="progress-row">
+        <div class="round-label" id="roundLabel">ROUND 1 – FUCK</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="question-counter" id="questionCounter">Question 1 of 3</div>
+      </div>
+
+      <div class="question-card" id="questionCard">
+        <h3 id="questionTitle">
+          Which girl group did Fuji pick for “fuck”?
+        </h3>
+        <p class="subtitle" id="questionSubtitle">
+          (Placeholder group – you can replace with the real one later.)
+        </p>
+
+        <div class="options" id="optionsContainer">
+          <!-- options are injected by JS -->
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-secondary" id="backBtn" disabled>Back</button>
+          <span class="question-counter" id="smallCounter">Question 1 / 3</span>
+          <button class="btn btn-primary" id="nextBtn">Next question</button>
+        </div>
+      </div>
+
+      <div class="results" id="resultsSection">
+        <h3>Results</h3>
+        <p class="score-highlight" id="scoreText"></p>
+        <div class="answer-list" id="answerList"></div>
+      </div>
+
+      <div class="music-indicator" id="musicToggle">
+        ♪ Music: <span>RESCENE – Bloom</span> (click to pause / play)
+      </div>
+      <div class="signature">
+        Made for <span>Lollygaggers</span> ♡
+      </div>
+
+      <audio id="bgMusic" loop>
+        <source src="fujisong.mp3" type="audio/mpeg" />
+      </audio>
+    </div>
+  </div>
+
+  <script>
+    // --- full quiz data with randomised option order ---
+    const questions = [
+      {
+        roundLabel: "ROUND 1 – FUCK",
+        title: 'Which girl group did Fuji pick for "fuck"?',
+        subtitle: "Category: Girl groups.",
+        options: ["Laysha", "Sistar", "Secret", "Twice", "Nobody"],
+        correctAnswer: "Laysha",
+        explanation: "Body Tea, face card never declined.",
+      },
+      {
+        roundLabel: "ROUND 2 – MARRY",
+        title: 'Which girl group did Fuji pick for "marry"?',
+        subtitle: "Category: Girl groups.",
+        options: ["Miss A", "4Minute", "Red Velvet", "CLC", "Nobody"],
+        correctAnswer: "Miss A",
+        explanation:
+          "The lineup after the flops left and Suzy was alone pre-disbandment.",
+      },
+      {
+        roundLabel: "ROUND 3 – KILL",
+        title: 'Which girl group did Fuji pick for "kill"?',
+        subtitle: "Category: Girl groups.",
+        options: ["B.E.G", "F(x)", "Wonder Girls", "NewJeans", "Nobody"],
+        correctAnswer: "B.E.G",
+        explanation: "These fossils got one foot on the grave already.",
+      },
+      {
+        roundLabel: "ROUND 4 – FUCK",
+        title: 'Which boy group did Fuji pick for "fuck"?',
+        subtitle: "Category: Boy groups.",
+        options: ["Seventeen", "BTOB", "ZB1", "Monsta X", "Nobody"],
+        correctAnswer: "Seventeen",
+        explanation: "The more, the merrier.",
+      },
+      {
+        roundLabel: "ROUND 5 – MARRY",
+        title: 'Which boy group did Fuji pick for "marry"?',
+        subtitle: "Category: Boy groups.",
+        options: ["A.C.E", "Pentagon", "EXO", "MBLAQ", "Nobody"],
+        correctAnswer: "Nobody",
+        explanation: "Fuji refuses to marry any boy group.",
+      },
+      {
+        roundLabel: "ROUND 6 – KILL",
+        title: 'Which boy group did Fuji pick for "kill"?',
+        subtitle: "Category: Boy groups.",
+        options: ["BigBang", "Stray Kids", "ALD1", "Super Junior", "Nobody"],
+        correctAnswer: "BigBang",
+        explanation: "Death to all of them by electric chair.",
+      },
+      {
+        roundLabel: "ROUND 7 – FUCK",
+        title: 'Which female idol did Fuji pick for "fuck"?',
+        subtitle: "Category: Female idols.",
+        options: ["Hyuna", "Hyolyn", "Yooa", "Nayeon", "Nobody"],
+        correctAnswer: "Yooa",
+        explanation: "Refer to the OH thread.",
+      },
+      {
+        roundLabel: "ROUND 8 – MARRY",
+        title: 'Which female idol did Fuji pick for "marry"?',
+        subtitle: "Category: Female idols.",
+        options: ["Sona-K", "Yeeun", "Hyuna", "Ash-B", "Nobody"],
+        correctAnswer: "Sona-K",
+        explanation: "You know he likes it when they are less attractive.",
+      },
+      {
+        roundLabel: "ROUND 9 – KILL",
+        title: 'Which female idol did Fuji pick for "kill"?',
+        subtitle: "Category: Female idols.",
+        options: ["Kwon Mina", "Sunmi", "Hwayoung", "Jimin", "Nobody"],
+        correctAnswer: "Sunmi",
+        explanation: "You've done enough.",
+      },
+      {
+        roundLabel: "ROUND 10 – FUCK",
+        title: 'Which male idol did Fuji pick for "fuck"?',
+        subtitle: "Category: Male idols.",
+        options: ["Jungkook", "Kai", "Wonho", "Hongseok", "Nobody"],
+        correctAnswer: "Jungkook",
+        explanation: "So he can catch his AIDS. (His words.)",
+      },
+      {
+        roundLabel: "ROUND 11 – MARRY",
+        title: 'Which male idol did Fuji pick for "marry"?',
+        subtitle: "Category: Male idols.",
+        options: ["Eunwoo", "Lee Jiham", "Jiwoong", "Yoon Seobin", "Nobody"],
+        correctAnswer: "Yoon Seobin",
+        explanation:
+          'Tonya said "first to come to mind" so it must be his true feelings.',
+      },
+      {
+        roundLabel: "ROUND 12 – KILL",
+        title: 'Which male idol did Fuji pick for "kill"?',
+        subtitle: "Category: Male idols.",
+        options: ["Leo", "G-Dragon", "Ricky", "RM", "Nobody"],
+        correctAnswer: "Leo",
+        explanation: "So ALD1's lineup becomes good.",
+      },
+      {
+        roundLabel: "ROUND 13 – FUCK",
+        title: 'Which League of Legends champ did Fuji pick for "fuck"?',
+        subtitle: "Category: League champs.",
+        options: ["Gragas", "Urgot", "Singed", "Trundle", "Nobody"],
+        correctAnswer: "Gragas",
+        explanation: "Exactly his type of body.",
+      },
+      {
+        roundLabel: "ROUND 14 – MARRY",
+        title: 'Which League of Legends champ did Fuji pick for "marry"?',
+        subtitle: "Category: League champs.",
+        options: ["Lux", "Vi", "Seraphine", "Nidalee", "Nobody"],
+        correctAnswer: "Lux",
+        explanation: "That's queen mother right there.",
+      },
+      {
+        roundLabel: "ROUND 15 – KILL",
+        title: 'Which League of Legends champ did Fuji pick for "kill"?',
+        subtitle: "Category: League champs.",
+        options: ["Maokai", "Malphite", "Warwick", "Reksai", "Nobody"],
+        correctAnswer: "Maokai",
+        explanation: "Don't ask, even he doesn't know.",
+      },
+      {
+        roundLabel: "ROUND 16 – FUCK",
+        title: 'Which Squid Game player number did Fuji pick for "fuck"?',
+        subtitle: "Category: Squid Game numbers.",
+        options: ["152", "004", "222", "333", "Nobody"],
+        correctAnswer: "152",
+        explanation: "",
+      },
+      {
+        roundLabel: "ROUND 17 – MARRY",
+        title: 'Which Squid Game player number did Fuji pick for "marry"?',
+        subtitle: "Category: Squid Game numbers.",
+        options: ["152", "004", "222", "333", "Nobody"],
+        correctAnswer: "004",
+        explanation: "",
+      },
+      {
+        roundLabel: "ROUND 18 – KILL",
+        title: 'Which Squid Game player number did Fuji pick for "kill"?',
+        subtitle: "Category: Squid Game numbers.",
+        options: ["152", "004", "222", "333", "Nobody"],
+        correctAnswer: "222",
+        explanation: "",
+      },
+      {
+        roundLabel: "ROUND 19 – FUCK",
+        title: 'Which Korean actor did Fuji pick for "fuck"?',
+        subtitle: "Category: Korean actors.",
+        options: ["Moon Ga Young", "lulu", "susu", "fufu", "Nobody"],
+        correctAnswer: "Moon Ga Young",
+        explanation: "She can teach him German, his favourite language.",
+      },
+      {
+        roundLabel: "ROUND 20 – MARRY",
+        title: 'Which Korean actor did Fuji pick for "marry"?',
+        subtitle: "Category: Korean actors.",
+        options: ["Seo Kang Joon", "lulu", "susu", "fufu", "Nobody"],
+        correctAnswer: "Seo Kang Joon",
+        explanation: "Saranghae, oppa.",
+      },
+      {
+        roundLabel: "ROUND 21 – KILL",
+        title: 'Which Korean actor did Fuji pick for "kill"?',
+        subtitle: "Category: Korean actors.",
+        options: ["Choi Wooshik", "lulu", "susu", "fufu", "Nobody"],
+        correctAnswer: "Choi Wooshik",
+        explanation: "So he doesn't ruin potential k-dramas.",
+      },
+      {
+        roundLabel: "ROUND 22 – FUCK",
+        title: 'Which One Piece character did Fuji pick for "fuck"?',
+        subtitle: "Category: One Piece.",
+        options: ["Nami", "Robin", "Vivi", "Brook", "Nobody"],
+        correctAnswer: "Nami",
+        explanation: "She's the second-best character.",
+      },
+      {
+        roundLabel: "ROUND 23 – MARRY",
+        title: 'Which One Piece character did Fuji pick for "marry"?',
+        subtitle: "Category: One Piece.",
+        options: ["Boa Hancock", "Brook", "Usopp", "Zoro", "Nobody"],
+        correctAnswer: "Boa Hancock",
+        explanation: "Because she's the best character.",
+      },
+      {
+        roundLabel: "ROUND 24 – KILL",
+        title: 'Which One Piece character did Fuji pick for "kill"?',
+        subtitle: "Category: One Piece.",
+        options: ["Franky", "Jinbe", "Luffy", "Brook", "Nobody"],
+        correctAnswer: "Franky",
+        explanation:
+          "Ruining the crew vibes – kill the big blue whale while at it.",
+      },
+      {
+        roundLabel: "ROUND 25 – FUCK",
+        title: 'Which western celeb did Fuji pick for "fuck"?',
+        subtitle: "Category: Western celebrities.",
+        options: [
+          "Henry Cavill",
+          "Chris Hemsworth",
+          "Margot Robbie",
+          "Jessica Biel",
+          "Nobody",
+        ],
+        correctAnswer: "Henry Cavill",
+        explanation: "Hold him in his big strong arms.",
+      },
+      {
+        roundLabel: "ROUND 26 – MARRY",
+        title: 'Which western celeb did Fuji pick for "marry"?',
+        subtitle: "Category: Western celebrities.",
+        options: ["Zendaya", "Angelina Jolie", "Anne Hathaway", "Tyla", "Nobody"],
+        correctAnswer: "Tyla",
+        explanation: "That's wife right there.",
+      },
+      {
+        roundLabel: "ROUND 27 – KILL",
+        title: 'Which western celeb did Fuji pick for "kill"?',
+        subtitle: "Category: Western celebrities.",
+        options: [
+          "Johnny Depp",
+          "Tom Cruise",
+          "Brad Pitt",
+          "Leonardo DiCaprio",
+          "Nobody",
+        ],
+        correctAnswer: "Johnny Depp",
+        explanation: "Been a chop and stayed one.",
+      },
+    ];
+
+    questions.forEach((q, index) => {
+      q.id = index + 1;
+      q.shuffledOptions = shuffleArray([...q.options]);
+    });
+
+    let currentIndex = 0;
+    const answers = new Array(questions.length).fill(null);
+
+    const roundLabelEl = document.getElementById("roundLabel");
+    const progressFillEl = document.getElementById("progressFill");
+    const questionCounterEl = document.getElementById("questionCounter");
+    const smallCounterEl = document.getElementById("smallCounter");
+    const questionTitleEl = document.getElementById("questionTitle");
+    const questionSubtitleEl = document.getElementById("questionSubtitle");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const backBtn = document.getElementById("backBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const resultsSection = document.getElementById("resultsSection");
+    const scoreTextEl = document.getElementById("scoreText");
+    const answerListEl = document.getElementById("answerList");
+
+    // optional start overlay (only if it exists in your HTML)
+    const startOverlay = document.getElementById("startOverlay");
+    const startBtn = document.getElementById("startBtn");
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+
+      roundLabelEl.textContent = q.roundLabel;
+      questionTitleEl.textContent = q.title;
+      questionSubtitleEl.textContent = q.subtitle;
+
+      const total = questions.length;
+      const current = currentIndex + 1;
+      const percent = (current / total) * 100;
+      progressFillEl.style.width = percent + "%";
+      questionCounterEl.textContent = `Question ${current} of ${total}`;
+      smallCounterEl.textContent = `Question ${current} / ${total}`;
+
+      backBtn.disabled = currentIndex === 0;
+      nextBtn.textContent =
+        currentIndex === total - 1 ? "See results" : "Next question";
+
+      optionsContainer.innerHTML = "";
+      const selectedAnswer = answers[currentIndex];
+
+      q.shuffledOptions.forEach((optText, idx) => {
+        const optId = `q${q.id}_opt${idx}`;
+        const label = document.createElement("label");
+        label.className = "option";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = "option";
+        input.id = optId;
+        input.value = optText;
+
+        const radioOuter = document.createElement("div");
+        radioOuter.className = "radio-outer";
+
+        const radioInner = document.createElement("div");
+        radioInner.className = "radio-inner";
+        radioOuter.appendChild(radioInner);
+
+        const textSpan = document.createElement("span");
+        textSpan.className = "text";
+        textSpan.textContent = optText;
+
+        label.appendChild(input);
+        label.appendChild(radioOuter);
+        label.appendChild(textSpan);
+
+        if (selectedAnswer === optText) {
+          label.classList.add("selected");
+          input.checked = true;
+        }
+
+        label.addEventListener("click", (e) => {
+          if (e.target.tagName.toLowerCase() === "input") return;
+          document
+            .querySelectorAll(".option")
+            .forEach((el) => el.classList.remove("selected"));
+          label.classList.add("selected");
+          input.checked = true;
+          answers[currentIndex] = optText;
+        });
+
+        optionsContainer.appendChild(label);
+      });
+    }
+
+    function showResults() {
+      const total = questions.length;
+      let score = 0;
+      answerListEl.innerHTML = "";
+
+      questions.forEach((q, idx) => {
+        const userAnswer = answers[idx];
+        const correct = q.correctAnswer;
+
+        if (userAnswer === correct) score++;
+
+        const userText = userAnswer === null ? "no answer" : userAnswer;
+
+        // pull category from subtitle ("Category: ...")
+        let catText = "";
+        const match = q.subtitle && q.subtitle.match(/Category:\s*(.+)/i);
+        if (match) {
+          catText = match[1].replace(/\.*$/, ""); // remove trailing dot if present
+        }
+
+        const baseRound = q.roundLabel.replace("ROUND ", ""); // e.g. "1 – FUCK"
+        const roundTitle = catText ? `${baseRound} – ${catText}` : baseRound;
+
+        const item = document.createElement("div");
+        item.className = "result-item";
+
+        item.innerHTML = `
+          <div class="result-title">${roundTitle}</div>
+          <div class="result-line">Fuji: <strong>${correct}</strong>${q.explanation ? ` – ${q.explanation}` : ""}</div>
+          <div class="result-line">You: ${userText}</div>
+        `;
+
+        answerListEl.appendChild(item);
+      });
+
+      let comment;
+      if (score <= 10) {
+        comment =
+          "Looks like you shouldn't be on the same team with Fuji in Codenames, the wavelength isn't wavelengthing.";
+      } else if (score <= 19) {
+        comment =
+          "Well after knowing him for like 8 years you can at least understand his brain sorta kinda.";
+      } else {
+        comment =
+          "I think this qualifies you to demand selfies from Fuji and his cheetah blanket.";
+      }
+
+      scoreTextEl.innerHTML = `You scored <strong>${score} / ${total}</strong>.<br><span class="score-comment">${comment}</span>`;
+      resultsSection.style.display = "flex";
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (!answers[currentIndex]) {
+        alert("Pick at least one option before moving on, detective.");
+        return;
+      }
+
+      if (currentIndex === questions.length - 1) {
+        showResults();
+        nextBtn.disabled = true;
+        backBtn.disabled = true;
+      } else {
+        currentIndex++;
+        renderQuestion();
+      }
+    });
+
+    backBtn.addEventListener("click", () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion();
+      }
+    });
+
+    // Music toggle
+    const music = document.getElementById("bgMusic");
+    const musicToggle = document.getElementById("musicToggle");
+    let musicPlaying = false;
+
+    function playMusic() {
+      if (!music) return;
+      music.play().then(
+        () => {
+          musicPlaying = true;
+          if (musicToggle) musicToggle.style.opacity = "1";
+        },
+        () => {
+          // autoplay might be blocked; that's fine, user can click the toggle
+        }
+      );
+    }
+
+    // Render first question on load
+    window.addEventListener("load", () => {
+      renderQuestion();
+    });
+
+    // optional start overlay wiring
+    if (startBtn && startOverlay) {
+      startBtn.addEventListener("click", () => {
+        startOverlay.classList.add("hidden");
+        playMusic();
+      });
+    }
+
+    // manual music toggle
+    if (musicToggle) {
+      musicToggle.addEventListener("click", () => {
+        if (!music) return;
+        if (musicPlaying) {
+          music.pause();
+          musicPlaying = false;
+          musicToggle.style.opacity = "0.6";
+        } else {
+          music.play();
+          musicPlaying = true;
+          musicToggle.style.opacity = "1";
+        }
+      });
+    }
+
+    // --- small helper: Fisher–Yates shuffle ---
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // ---------- create floating star background ----------
+    (function createStarField() {
+      const starField = document.createElement("div");
+      starField.className = "star-field";
+      document.body.appendChild(starField);
+
+      const STAR_COUNT = 60;
+
+      for (let i = 0; i < STAR_COUNT; i++) {
+        const star = document.createElement("div");
+        star.className = "star";
+
+        // random horizontal position
+        star.style.left = Math.random() * 100 + "vw";
+
+        // random starting offset (some already falling)
+        star.style.top = Math.random() * 100 + "vh";
+
+        // random size a bit
+        const size = 2 + Math.random() * 3; // 2–5px
+        star.style.width = size + "px";
+        star.style.height = size + "px";
+
+        // random fall duration and delay
+        const duration = 10 + Math.random() * 12; // 10–22s
+        const delay = Math.random() * -duration;   // negative = already mid-fall
+        star.style.animationDuration = duration + "s";
+        star.style.animationDelay = delay + "s";
+
+        starField.appendChild(star);
+      }
+    })();
+  </script>
+</body>
+</html>
+
